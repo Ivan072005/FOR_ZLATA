@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Для Златы</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Comfortaa:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Одна нежная пастельная страница: письмо, счётчик, карта Киев–Львов, конвертики, купоны */
+:root {
+  --bg: #fdf1f4;
+  --paper: #fffafb;
+  --blush: #f8d7e0;
+  --rose: #e98aa6;
+  --berry: #b8486c;
+  --ink: #5a3442;
+  --muted: #9a7280;
+  --line: #f1c6d3;
+  --display: "Marck Script", "Segoe Script", cursive;
+  --body: "Comfortaa", "Nunito", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+html { padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+#petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 88px; padding-block: 48px 72px; }
+h1, h2 { font-family: var(--display); font-weight: 400; color: var(--berry); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(3rem, 11vw, 5.4rem); }
+h2 { font-size: clamp(2.2rem, 7vw, 3.2rem); }
+p { margin: 0; }
+.eyebrow { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+section { display: flex; flex-direction: column; gap: 20px; }
+.center { align-items: center; text-align: center; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--berry); outline-offset: 3px; }
+
+/* Вопрос */
+.gate { gap: 28px; padding-top: 24px; }
+.gate .sub { color: var(--muted); max-width: 34ch; }
+.answers { position: relative; display: flex; gap: 16px; justify-content: center; align-items: center; min-height: 150px; width: 100%; }
+.btn { border: 0; border-radius: 999px; padding: 14px 34px; font-weight: 700; font-size: 1.05rem; transition: transform .2s ease, background .2s; }
+.btn-yes { background: var(--berry); color: var(--paper); box-shadow: 0 8px 22px -10px var(--berry); }
+.btn-yes:hover { transform: scale(1.06); }
+.btn-no { background: var(--paper); color: var(--muted); border: 2px solid var(--line); position: relative; z-index: 2; touch-action: none; transition: left .25s ease, top .25s ease, transform .25s ease; }
+.btn-yes { transition: transform .2s ease, font-size .25s, padding .25s; }
+.no-note { min-height: 1.6em; color: var(--rose); font-weight: 600; }
+
+/* Письмо */
+.envelope-wrap { perspective: 900px; width: 100%; display: flex; justify-content: center; }
+.envelope { width: min(100%, 420px); aspect-ratio: 3 / 2; max-width: 100%; position: relative; background: var(--blush); border-radius: 10px; border: 0; padding: 0; box-shadow: 0 18px 40px -22px var(--berry); }
+.envelope::before { content: ""; position: absolute; inset: 0; clip-path: polygon(0 0, 50% 58%, 100% 0); background: var(--rose); border-radius: 10px 10px 0 0; transform-origin: top; transition: transform .6s ease; }
+.envelope .seal { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); width: 58px; height: 58px; border-radius: 50%; background: var(--berry); color: var(--paper); display: grid; place-items: center; font-size: 1.5rem; z-index: 2; transition: opacity .3s; }
+.envelope .hint { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: var(--berry); font-weight: 700; font-size: .9rem; }
+.envelope.open::before { transform: rotateX(180deg); }
+.envelope.open .seal { opacity: 0; }
+.letter { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 32px clamp(20px, 5vw, 44px); width: 100%; text-align: left; background-image: repeating-linear-gradient(transparent 0 31px, var(--line) 31px 32px); background-position: 0 29px; box-shadow: 0 20px 40px -30px var(--berry); }
+.letter p { font-family: var(--display); font-size: 1.55rem; line-height: 32px; white-space: pre-wrap; min-height: 6em; }
+.caret { display: inline-block; width: 2px; height: 1.1em; background: var(--berry); vertical-align: -3px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Счётчик */
+.counter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; }
+.cell { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; }
+.cell b { font-family: var(--mono); font-size: clamp(1.6rem, 6vw, 2.6rem); color: var(--berry); font-variant-numeric: tabular-nums; font-weight: 600; }
+.cell span { font-size: .78rem; color: var(--muted); }
+
+/* Карта */
+.map { width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 12px; }
+.map svg { width: 100%; height: auto; display: block; }
+.map text { font-family: var(--body); }
+.facts { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.chip { background: var(--blush); color: var(--berry); border-radius: 999px; padding: 6px 14px; font-size: .85rem; font-weight: 700; }
+
+/* История */
+.story { list-style: none; margin: 0; padding: 0 0 0 28px; border-left: 2px dashed var(--rose); display: flex; flex-direction: column; gap: 26px; }
+.story li { position: relative; }
+.story li::before { content: "♥"; position: absolute; left: -39px; top: -2px; width: 20px; text-align: center; color: var(--berry); background: var(--bg); font-size: 1.1rem; }
+.story h3 { margin: 0 0 4px; font-size: 1.05rem; color: var(--berry); }
+.story p { color: var(--ink); }
+
+/* Конвертики */
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; width: 100%; }
+.note { perspective: 800px; border: 0; background: none; padding: 0; min-height: 170px; text-align: left; }
+.note-in { position: relative; width: 100%; height: 100%; min-height: 170px; transition: transform .6s ease; transform-style: preserve-3d; }
+.note.flipped .note-in { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; border-radius: 18px; padding: 20px; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.front { background: var(--blush); color: var(--berry); }
+.front small { color: var(--muted); font-weight: 700; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+.front strong { font-family: var(--display); font-weight: 400; font-size: 1.7rem; line-height: 1.2; }
+.back { background: var(--paper); border: 1px solid var(--line); transform: rotateY(180deg); font-size: .95rem; color: var(--ink); }
+
+/* Причины */
+.reason-box { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 28px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.reason { font-family: var(--display); font-size: clamp(1.6rem, 5vw, 2.1rem); color: var(--ink); min-height: 2.6em; display: grid; place-items: center; text-align: center; transition: opacity .25s; }
+.reason-count { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+
+/* Купоны */
+.coupons { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; width: 100%; }
+.coupon { background: var(--paper); border: 2px dashed var(--rose); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; text-align: left; color: var(--ink); }
+.coupon .t { font-weight: 700; color: var(--berry); }
+.coupon .d { font-size: .88rem; color: var(--muted); }
+.coupon .use { align-self: flex-start; margin-top: 4px; border: 0; background: var(--blush); color: var(--berry); border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: .82rem; }
+.coupon.used { opacity: .55; }
+.coupon.used .use { background: var(--line); }
+
+/* Финал */
+.code { font-family: var(--mono); background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; font-size: .9rem; text-align: left; overflow-x: auto; max-width: 100%; color: var(--ink); }
+.code .k { color: var(--berry); font-weight: 600; }
+.code .c { color: var(--muted); }
+.sign { font-family: var(--display); font-size: 2rem; color: var(--berry); }
+
+.burst { position: fixed; pointer-events: none; z-index: 5; color: var(--rose); font-size: 22px; animation: fly 1.4s ease-out forwards; }
+@keyframes fly { to { transform: translate(var(--dx), var(--dy)) scale(.4); opacity: 0; } }
+
+@media (max-width: 520px) {
+  main { gap: 64px; }
+  .counter { grid-template-columns: repeat(2, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { transition: none !important; animation: none !important; }
+}
+</style>
+
+</head>
+<body>
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<main>
+  <section class="gate center" id="gate">
+    <p class="eyebrow">Киев → Львов, с любовью</p>
+    <h1>Злата, ты меня любишь?</h1>
+    <p class="sub">Подумай хорошо. Правильный ответ тут только один 🙂</p>
+    <div class="answers" id="answers">
+      <button class="btn btn-yes" id="yes">Да 💗</button>
+      <button class="btn btn-no" id="no">Нет</button>
+    </div>
+    <p class="no-note" id="noNote" aria-live="polite"></p>
+  </section>
+
+  <section class="center" id="letterSec">
+    <p class="eyebrow">Письмо для тебя</p>
+    <div class="envelope-wrap">
+      <button class="envelope" id="envelope" aria-label="Открыть письмо">
+        <span class="seal">♥</span>
+        <span class="hint">нажми, чтобы открыть</span>
+      </button>
+    </div>
+    <div class="letter" id="letter" hidden>
+      <p id="letterText"></p>
+    </div>
+  </section>
+
+  <section class="center">
+    <p class="eyebrow">Мы вместе уже</p>
+    <h2>Каждая секунда считается</h2>
+    <div class="counter" aria-live="off">
+      <div class="cell"><b id="cD">0</b><span>дней</span></div>
+      <div class="cell"><b id="cH">0</b><span>часов</span></div>
+      <div class="cell"><b id="cM">0</b><span>минут</span></div>
+      <div class="cell"><b id="cS">0</b><span>секунд</span></div>
+    </div>
+  </section>
+
+  <section class="center">
+    <p class="eyebrow">Между нами</p>
+    <h2>468 километров</h2>
+    <div class="map">
+      <svg viewBox="0 0 600 260" role="img" aria-label="Путь от Львова до Киева">
+        <path id="route" d="M 90 170 C 220 40, 380 40, 510 130" fill="none" stroke="var(--rose)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+        <g>
+          <circle cx="90" cy="170" r="10" fill="var(--berry)"/>
+          <text x="90" y="210" text-anchor="middle" fill="var(--ink)" font-size="18" font-weight="700">Львов</text>
+          <text x="90" y="232" text-anchor="middle" fill="var(--muted)" font-size="13">тут Злата</text>
+        </g>
+        <g>
+          <circle cx="510" cy="130" r="10" fill="var(--berry)"/>
+          <text x="510" y="170" text-anchor="middle" fill="var(--ink)" font-size="18" font-weight="700">Киев</text>
+          <text x="510" y="192" text-anchor="middle" fill="var(--muted)" font-size="13">тут Ваня</text>
+        </g>
+        <text id="traveler" font-size="26" text-anchor="middle" dominant-baseline="central" fill="var(--berry)">♥</text>
+      </svg>
+    </div>
+    <div class="facts">
+      <span class="chip">468 км по прямой</span>
+      <span class="chip">≈ 5 часов на Интерсити</span>
+      <span class="chip">0 км, когда мы созваниваемся</span>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Наша история</p>
+    <h2>Как всё началось</h2>
+    <ol class="story">
+      <li><h3>Badoo</h3><p>Обычный вечер, обычный свайп. Я тогда ещё не знал, что листать дальше уже не придётся.</p></li>
+      <li><h3>Первое сообщение</h3><p>Я долго придумывал, что написать, а потом мы просто проговорили полночи.</p></li>
+      <li><h3>Первый звонок</h3><p>Твой голос оказался ещё лучше, чем я представлял.</p></li>
+      <li><h3>«Мы теперь вместе»</h3><p>Две недели, а кажется, будто я знаю тебя очень давно.</p></li>
+      <li><h3>Дальше</h3><p>Первая встреча, первое «привет» вживую, и всё, что будет потом. Эту главу пишем вместе.</p></li>
+    </ol>
+  </section>
+
+  <section class="center">
+    <p class="eyebrow">Открой, когда…</p>
+    <h2>Конвертики на любой случай</h2>
+    <div class="notes" id="notes"></div>
+  </section>
+
+  <section class="center">
+    <p class="eyebrow">За что я тебя люблю</p>
+    <h2>Причин много. Нажимай</h2>
+    <div class="reason-box">
+      <div class="reason" id="reason">Нажми на кнопку ниже 💗</div>
+      <button class="btn btn-yes" id="nextReason">Ещё причина</button>
+      <span class="reason-count" id="reasonCount"></span>
+    </div>
+  </section>
+
+  <section class="center">
+    <p class="eyebrow">Купоны</p>
+    <h2>Действительны всегда</h2>
+    <p style="color: var(--muted)">Нажми «Использовать» и покажи мне скриншот. Я обязан выполнить.</p>
+    <div class="coupons" id="coupons"></div>
+  </section>
+
+  <section class="center">
+    <p class="eyebrow">Немного на моём языке и на твоём</p>
+    <pre class="code"><span class="c">// мой код на всю жизнь</span>
+<span class="k">while</span> (<span class="k">true</span>) {
+  love(<span class="k">"Злата"</span>);
+}</pre>
+    <p style="max-width: 40ch">And in yours: <em>I have fallen for you.</em><br>Present Perfect, потому что это случилось, и это навсегда.</p>
+    <p class="sign">Твой Ваня</p>
+  </section>
+</main>
+
+<script>
+// ===== Настройки: поменяй под себя =====
+const CONFIG = {
+  togetherSince: "2026-10-14T14:40:00", // дата и время, когда вы начали встречаться
+  letter:
+`Моя милая Злата,
+
+я долго думал, с чего начать это письмо, и понял, что начать нужно с главного: спасибо тебе.
+
+Этот год был для меня непростым. Было время, когда внутри было тяжело и пусто, и я не очень верил, что всё может стать по-другому. А потом появилась ты. Тихо, по-доброму, со своей улыбкой и своим «доброе утро». И ты стала моим лучиком света.
+
+С тобой я обрёл то, чего мне так не хватало: спокойствие и гармонию. Рядом с тобой, пусть пока и через экран, мне не нужно ничего доказывать и ни за что бороться. Мне просто хорошо. Я снова чувствую, что всё на своих местах.
+
+Ты даже не представляешь, как много для меня значат наши разговоры до ночи, твой смех в голосовых, то, как ты рассказываешь про свой день и своих учеников. В такие моменты я думаю: как же мне с тобой повезло.
+
+Между Киевом и Львовом почти 500 километров, но я не чувствую этого расстояния. Ты всегда со мной: в мыслях, в телефоне, в сердце.
+
+Я очень жду нашей встречи. Хочу увидеть тебя, обнять и наконец сказать всё это вживую, глядя в твои глаза.
+
+Спасибо, что ты есть. Ты самое тёплое, что случилось со мной.
+
+Твой Ваня 💗`,
+  notes: [
+    ["тебе грустно", "Вспомни, что где-то в Киеве есть человек, который прямо сейчас бросил бы всё, чтобы тебя обнять. Напиши мне, я рядом."],
+    ["ты скучаешь", "Я скучаю больше. Это не обсуждается. Набери меня, даже если просто помолчать вместе."],
+    ["не можешь уснуть", "Закрой глаза и представь, что я рядом и глажу тебя по голове. Спокойной ночи, моя хорошая."],
+    ["ученики довели", "Ты самый терпеливый и умный преподаватель. А ещё самый красивый. Чай, плед, и я на звонке."],
+    ["хочется улыбнуться", "Представь меня, когда я пытаюсь правильно произнести «th». Вот. Улыбнулась 🙂"],
+    ["сомневаешься во мне", "Не надо. Я выбрал тебя и выбираю каждый день."]
+  ],
+  reasons: [
+    "Твоя улыбка, даже через экран",
+    "Как ты говоришь «доброе утро»",
+    "Ты умная. По-настоящему",
+    "Ты объясняешь английский так, что даже я понимаю",
+    "С тобой можно говорить часами",
+    "Твой смех в голосовых",
+    "Ты нежная и сильная одновременно",
+    "Ты любишь розовый, и это очень тебе идёт",
+    "Ты делаешь мои будни теплее",
+    "Ты просто ты. Этого достаточно"
+  ],
+  coupons: [
+    ["Звонок без лимита", "До утра, даже если завтра рано вставать"],
+    ["Свидание по видео", "Фильм, который выберешь ты, синхронно"],
+    ["Любое желание", "Загадай, а я исполню. Даже если придётся на звонке танцевать"],
+    ["Объятие на 10 минут", "Погашается при первой встрече"],
+    ["Я прав, а ты права", "Ты выигрываешь любой спор"],
+    ["Ночь только для нас 🔥", "Действует при встрече. Подробности расскажу шёпотом 😏"]
+  ]
+};
+
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+// Сердечки-взрыв
+function burst(x, y, n = 18) {
+  if (reduce) return;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement("span");
+    s.className = "burst";
+    s.textContent = "♥";
+    s.style.left = x + "px"; s.style.top = y + "px";
+    const a = Math.random() * Math.PI * 2, r = 80 + Math.random() * 120;
+    s.style.setProperty("--dx", Math.cos(a) * r + "px");
+    s.style.setProperty("--dy", Math.sin(a) * r + "px");
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1500);
+  }
+}
+
+// Вопрос
+const noBtn = document.getElementById("no"), noNote = document.getElementById("noNote");
+const yesBtn = document.getElementById("yes");
+const noLines = ["Ой, промахнулась 🙂", "Кнопка сломалась", "Попробуй другую", "Даже кнопка против", "Ну Злата!", "Кнопка устала убегать"];
+const noLabels = ["Нет", "Точно?", "Подумай ещё", "Уверена?", "Ну пожалуйста", "Сердце разбито 💔"];
+let noTries = 0, lastDodge = 0;
+function dodge(e) {
+  if (e) e.preventDefault();
+  // одно касание на телефоне шлёт несколько событий, считаем их одной попыткой
+  if (performance.now() - lastDodge < 400) return;
+  lastDodge = performance.now();
+  noTries++;
+  // после шести попыток «Нет» превращается во второе «Да»
+  if (noTries > 6) {
+    noBtn.textContent = "Да 💗";
+    noBtn.className = "btn btn-yes";
+    noBtn.style.transform = "";
+    noBtn.style.position = "";
+    noNote.textContent = "Так и быть. Теперь обе кнопки правильные 😌";
+    noBtn.removeEventListener("pointerdown", dodge);
+    noBtn.removeEventListener("mouseenter", dodge);
+    noBtn.removeEventListener("click", dodge);
+    noBtn.addEventListener("click", sayYes);
+    return;
+  }
+  // прыгаем в случайное место, но внутри блока, чтобы на телефоне не улетела за край
+  noBtn.textContent = noLabels[Math.min(noTries, noLabels.length - 1)];
+  const box = document.getElementById("answers");
+  const W = box.clientWidth, H = box.clientHeight;
+  const w = noBtn.offsetWidth, h = noBtn.offsetHeight;
+  const cur = noBtn.getBoundingClientRect(), b = box.getBoundingClientRect();
+  const cx = cur.left - b.left, cy = cur.top - b.top;
+  noBtn.style.position = "absolute";
+  let nx, ny, tries = 0;
+  do {
+    nx = Math.random() * Math.max(0, W - w);
+    ny = Math.random() * Math.max(0, H - h);
+  } while (Math.hypot(nx - cx, ny - cy) < 90 && ++tries < 20);
+  noBtn.style.left = nx + "px"; noBtn.style.top = ny + "px";
+  noBtn.style.transform = `scale(${Math.max(.6, 1 - noTries * .07)})`;
+  yesBtn.style.transform = `scale(${1 + noTries * .12})`;
+  noNote.textContent = noLines[(noTries - 1) % noLines.length];
+}
+noBtn.addEventListener("mouseenter", dodge);
+noBtn.addEventListener("pointerdown", dodge);
+noBtn.addEventListener("click", dodge);
+yesBtn.addEventListener("click", sayYes);
+function sayYes(e) {
+  burst(e.clientX, e.clientY, 30);
+  noNote.textContent = "Я знал 💗 Листай вниз, там письмо";
+  noBtn.hidden = true;
+  yesBtn.style.transform = "";
+  setTimeout(() => document.getElementById("letterSec").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }), 700);
+}
+
+// Письмо
+const env = document.getElementById("envelope");
+env.addEventListener("click", e => {
+  if (env.classList.contains("open")) return;
+  env.classList.add("open");
+  burst(e.clientX, e.clientY);
+  setTimeout(() => {
+    env.parentElement.hidden = true;
+    document.getElementById("letter").hidden = false;
+    typeLetter();
+  }, reduce ? 0 : 650);
+});
+function typeLetter() {
+  const el = document.getElementById("letterText"), txt = CONFIG.letter;
+  if (reduce) { el.textContent = txt; return; }
+  let i = 0;
+  const caret = document.createElement("span"); caret.className = "caret";
+  (function step() {
+    el.textContent = txt.slice(0, ++i); el.appendChild(caret);
+    if (i < txt.length) setTimeout(step, txt[i - 1] === "\n" ? 200 : 22);
+    else setTimeout(() => caret.remove(), 2000);
+  })();
+}
+
+// Счётчик
+const since = new Date(CONFIG.togetherSince).getTime();
+function tick() {
+  let s = Math.max(0, Math.floor((Date.now() - since) / 1000));
+  const d = Math.floor(s / 86400); s %= 86400;
+  const h = Math.floor(s / 3600); s %= 3600;
+  const m = Math.floor(s / 60); s %= 60;
+  cD.textContent = d; cH.textContent = h; cM.textContent = m; cS.textContent = s;
+}
+tick(); setInterval(tick, 1000);
+
+// Сердечко летит между городами
+const route = document.getElementById("route"), trav = document.getElementById("traveler");
+const len = route.getTotalLength();
+let t0 = performance.now();
+function travel(now) {
+  const p = reduce ? .5 : (Math.sin((now - t0) / 1800) + 1) / 2;
+  const pt = route.getPointAtLength(p * len);
+  trav.setAttribute("x", pt.x); trav.setAttribute("y", pt.y);
+  if (!reduce) requestAnimationFrame(travel);
+}
+requestAnimationFrame(travel);
+
+// Конвертики
+const notes = document.getElementById("notes");
+CONFIG.notes.forEach(([when, text]) => {
+  const b = document.createElement("button");
+  b.className = "note";
+  b.innerHTML = `<div class="note-in"><div class="face front"><small>открой, когда</small><strong></strong></div><div class="face back"></div></div>`;
+  b.querySelector("strong").textContent = when;
+  b.querySelector(".back").textContent = text;
+  b.addEventListener("click", () => b.classList.toggle("flipped"));
+  notes.appendChild(b);
+});
+
+// Причины
+let ri = -1;
+const reasonEl = document.getElementById("reason"), rc = document.getElementById("reasonCount");
+document.getElementById("nextReason").addEventListener("click", e => {
+  ri = (ri + 1) % CONFIG.reasons.length;
+  reasonEl.style.opacity = 0;
+  setTimeout(() => { reasonEl.textContent = CONFIG.reasons[ri]; reasonEl.style.opacity = 1; }, 200);
+  rc.textContent = `причина ${ri + 1} из ${CONFIG.reasons.length}… и это только начало`;
+  burst(e.clientX, e.clientY, 8);
+});
+
+// Купоны
+const used = store.get("usedCoupons") || [];
+const cWrap = document.getElementById("coupons");
+CONFIG.coupons.forEach(([t, d], i) => {
+  const c = document.createElement("div");
+  c.className = "coupon" + (used.includes(i) ? " used" : "");
+  c.innerHTML = `<span class="t"></span><span class="d"></span><button class="use"></button>`;
+  c.querySelector(".t").textContent = "🎟 " + t;
+  c.querySelector(".d").textContent = d;
+  const btn = c.querySelector(".use");
+  btn.textContent = used.includes(i) ? "Использован 💗" : "Использовать";
+  btn.addEventListener("click", e => {
+    if (used.includes(i)) return;
+    used.push(i); store.set("usedCoupons", used);
+    c.classList.add("used"); btn.textContent = "Использован 💗";
+    burst(e.clientX, e.clientY, 12);
+  });
+  cWrap.appendChild(c);
+});
+
+// Лепестки на фоне
+(function petals() {
+  if (reduce) return;
+  const cv = document.getElementById("petals"), ctx = cv.getContext("2d");
+  let W, H; const P = [];
+  function size() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  size(); addEventListener("resize", size);
+  for (let i = 0; i < 22; i++) P.push({ x: Math.random() * W, y: Math.random() * H, r: 5 + Math.random() * 7, s: .3 + Math.random() * .7, a: Math.random() * 6, w: .01 + Math.random() * .02 });
+  (function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.y += p.s; p.a += p.w; p.x += Math.sin(p.a) * .6;
+      if (p.y > H + 20) { p.y = -20; p.x = Math.random() * W; }
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+      ctx.fillStyle = "rgba(233,138,166,.35)";
+      ctx.beginPath(); ctx.ellipse(0, 0, p.r, p.r * .6, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
+</script>
+</body>
+</html>
