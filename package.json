@@ -1,0 +1,9 @@
+{
+  "name": "for-zlata",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.134.0",
+    "@netlify/blobs": "11.1.4"
+  }
+}
